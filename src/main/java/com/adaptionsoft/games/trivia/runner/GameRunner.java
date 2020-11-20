@@ -1,6 +1,4 @@
-package adaptionsoft.game.trivia.runner;
-
-import adaptionsoft.game.trivia.uglytrivia.Game;
+package com.adaptionsoft.games.trivia.runner;
 
 import java.util.Random;
 

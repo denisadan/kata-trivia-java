@@ -1,40 +1,23 @@
 package com.adaptionsoft.games.trivia.runner;
 
 public class Player {
-    private String name;
 
+    private final String name;
     private int currentPlace;
     private int purse;
     private boolean inPenaltyBox;
     private boolean isGettingOutOfPenaltyBox;  // can we get rid of these 2 and leae just 1?
 
-    public void getACoin() {
-        purse = purse + 1;
-    }
-
-    public void makeAMove(int position) {
-        currentPlace = currentPlace + position;
-    }
-
     public Player(String name) {
         this.name = name;
     }
-
 
     public int getCurrentPlace() {
         return currentPlace;
     }
 
-    public void setCurrentPlace(int currentPlace) {
-        this.currentPlace = currentPlace;
-    }
-
     public int getPurse() {
         return purse;
-    }
-
-    public void setPurse(int purse) {
-        this.purse = purse;
     }
 
     public boolean isInPenaltyBox() {
@@ -56,4 +39,17 @@ public class Player {
     public String getName() {
         return name;
     }
+
+    public void getACoin() {
+        purse = purse + 1;
+    }
+
+    public void makeAMove(int position) {
+        currentPlace = currentPlace + position;
+    }
+
+    public boolean isWinner() {
+        return (this.purse != 6);
+    }
+
 }

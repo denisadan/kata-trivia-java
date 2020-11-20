@@ -8,12 +8,19 @@ import java.util.List;
 
 public class GameHandlerService {
 
-    private LinkedList<Question> popQuestions = new LinkedList<Question>();
-    private LinkedList<Question> rockQuestions = new LinkedList<Question>();
-    private LinkedList<Question> sportsQuestions = new LinkedList<Question>();
-    private LinkedList<Question> scienceQuestions = new LinkedList<Question>();
+    private final List<Question> popQuestions;
+    private final List<Question> rockQuestions;
+    private final List<Question> sportsQuestions;
+    private final List<Question> scienceQuestions;
+    private final List<Player> players;
 
-    private ArrayList<Player> players = new ArrayList<Player>();
+    public GameHandlerService() {
+        popQuestions = new LinkedList<Question>();
+        rockQuestions = new LinkedList<Question>();
+        sportsQuestions = new LinkedList<Question>();
+        scienceQuestions = new LinkedList<Question>();
+        players = new ArrayList<Player>();
+    }
 
     public List<Question> getPopQuestions() {
         return popQuestions;
@@ -32,16 +39,23 @@ public class GameHandlerService {
     }
 
     public void askQuestion(QuestionType type) {
-        LinkedList<Question> questionsByType = getQuestionsByType(type);
+        LinkedList<Question> questionsByType = (LinkedList<Question>) getQuestionsByType(type);
         questionsByType.removeFirst();
     }
 
     public void addQuestion(Question q) {
-        LinkedList<Question> questionsByType = getQuestionsByType(q.getType());
+        LinkedList<Question> questionsByType = (LinkedList<Question>) getQuestionsByType(q.getType());
         questionsByType.addLast(q);
     }
 
-    private LinkedList<Question> getQuestionsByType(QuestionType type) {
+    public QuestionType getQuestionCategory(int place) {
+        if (place == 0 || place == 4 || place == 8) return QuestionType.POP;
+        if (place == 1 || place == 5 || place == 9) return QuestionType.SCIENCE;
+        if (place == 2 || place == 6 || place == 10) return QuestionType.SPORTS;
+        return QuestionType.ROCK;
+    }
+
+    private List<Question> getQuestionsByType(QuestionType type) {
         switch (type) {
             case POP:
                 return popQuestions;

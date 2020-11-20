@@ -1,13 +1,11 @@
-package adaptionsoft.game.trivia.uglytrivia;
+package com.adaptionsoft.games.trivia.runner;
 
-import com.adaptionsoft.games.trivia.runner.GameHandlerService;
-import com.adaptionsoft.games.trivia.runner.Player;
-import com.adaptionsoft.games.trivia.runner.Question;
 import com.adaptionsoft.games.trivia.runner.Question.QuestionType;
 
 public class Game {
+
     private final GameHandlerService gameHandlerService = new GameHandlerService();
-    int currentPlayer = 0;
+    private int currentPlayer = 0;
 
     public void initGame() {
         for (int i = 0; i < 50; i++) {
@@ -45,7 +43,7 @@ public class Game {
 
         System.out.println(getCurrentPlayerName() + "'s new location is " + player.getCurrentPlace());
 
-        QuestionType category = getCategoryByPlace(player.getCurrentPlace());
+        QuestionType category = gameHandlerService.getQuestionCategory(player.getCurrentPlace());
         System.out.println("The category is " + category);
         gameHandlerService.askQuestion(category);
     }
@@ -54,27 +52,18 @@ public class Game {
         return getCurrentPlayer().getName();
     }
 
-    private QuestionType getCategoryByPlace(int place) { // move this to game service?
-        if (place == 0 || place == 4 || place == 8) return QuestionType.POP;
-        if (place == 1 || place == 5 || place == 9) return QuestionType.SCIENCE;
-        if (place == 2 || place == 6 || place == 10) return QuestionType.SPORTS;
-        return QuestionType.ROCK;
-    }
-
     public boolean answerIsRight() {
         Player player = getCurrentPlayer();
-        boolean isWinner;
 
         if (!player.isInPenaltyBox() || player.isGettingOutOfPenaltyBox()) {
             playerAnswersCorrectly(player);
-            isWinner = didPlayerWin(player);
             moveToNextPlayer();
         } else {
             moveToNextPlayer();
-            isWinner = true;
+            return true;
         }
 
-        return isWinner; // faulty logic?
+        return player.isWinner(); // faulty logic?
     }
 
     public boolean answerIsWrong() {
@@ -116,7 +105,4 @@ public class Game {
         return gameHandlerService.getPlayers().get(currentPlayer);
     }
 
-    private boolean didPlayerWin(Player player) {
-        return (player.getPurse() != 6);
-    }
 }
