@@ -8,18 +8,18 @@ import java.util.List;
 
 public class GameHandlerService {
 
-    private final List<Question> popQuestions;
-    private final List<Question> rockQuestions;
-    private final List<Question> sportsQuestions;
-    private final List<Question> scienceQuestions;
+    private final LinkedList<Question> popQuestions;
+    private final LinkedList<Question> rockQuestions;
+    private final LinkedList<Question> sportsQuestions;
+    private final LinkedList<Question> scienceQuestions; // should use another collection for all 4?
     private final List<Player> players;
 
     public GameHandlerService() {
-        popQuestions = new LinkedList<Question>();
-        rockQuestions = new LinkedList<Question>();
-        sportsQuestions = new LinkedList<Question>();
-        scienceQuestions = new LinkedList<Question>();
-        players = new ArrayList<Player>();
+        popQuestions = new LinkedList<>();
+        rockQuestions = new LinkedList<>();
+        sportsQuestions = new LinkedList<>();
+        scienceQuestions = new LinkedList<>();
+        players = new ArrayList<>();
     }
 
     public List<Question> getPopQuestions() {
@@ -38,13 +38,13 @@ public class GameHandlerService {
         return players.size();
     }
 
-    public void askQuestion(QuestionType type) {
-        LinkedList<Question> questionsByType = (LinkedList<Question>) getQuestionsByType(type);
-        questionsByType.removeFirst();
+    public Question askQuestion(QuestionType type) {
+        LinkedList<Question> questionsByType = getQuestionsByType(type);
+        return questionsByType.removeFirst();
     }
 
     public void addQuestion(Question q) {
-        LinkedList<Question> questionsByType = (LinkedList<Question>) getQuestionsByType(q.getType());
+        LinkedList<Question> questionsByType = getQuestionsByType(q.getType());
         questionsByType.addLast(q);
     }
 
@@ -55,7 +55,7 @@ public class GameHandlerService {
         return QuestionType.ROCK;
     }
 
-    private List<Question> getQuestionsByType(QuestionType type) {
+    private LinkedList<Question> getQuestionsByType(QuestionType type) {
         switch (type) {
             case POP:
                 return popQuestions;
@@ -66,7 +66,7 @@ public class GameHandlerService {
             case SCIENCE:
                 return scienceQuestions;
             default:
-                return new LinkedList<Question>();
+                return new LinkedList<>();
         }
 
     }

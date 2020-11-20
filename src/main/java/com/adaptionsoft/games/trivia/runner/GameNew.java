@@ -1,22 +1,25 @@
 package com.adaptionsoft.games.trivia.runner;
 
+import com.adaptionsoft.games.trivia.IGame;
 import com.adaptionsoft.games.trivia.runner.Question.QuestionType;
 
-public class Game {
+import static com.adaptionsoft.games.trivia.runner.Question.QuestionType.*;
+
+public class GameNew implements IGame {
 
     private final GameHandlerService gameHandlerService = new GameHandlerService();
     private int currentPlayer = 0;
 
-    public void initGame() {
+    public GameNew() {
         for (int i = 0; i < 50; i++) {
-            gameHandlerService.addQuestion(new Question(QuestionType.POP, String.valueOf(i)));
-            gameHandlerService.addQuestion(new Question(QuestionType.SCIENCE, String.valueOf(i)));
-            gameHandlerService.addQuestion(new Question(QuestionType.SPORTS, String.valueOf(i)));
-            gameHandlerService.addQuestion(new Question(QuestionType.ROCK, String.valueOf(i)));
+            gameHandlerService.addQuestion(new Question(POP, "Pop Question " + i));
+            gameHandlerService.addQuestion(new Question(SCIENCE, "Science Question " + i));
+            gameHandlerService.addQuestion(new Question(SPORTS, "Sports Question " + i));
+            gameHandlerService.addQuestion(new Question(ROCK, "Rock Question " + i));
         }
     }
 
-    public void addPlayer(String playerName) {
+    public void add(String playerName) {
         gameHandlerService.addPlayer(new Player(playerName));
         System.out.println(playerName + " was added");
         System.out.println("They are player number " + gameHandlerService.getNumberOfPlayers());
@@ -29,7 +32,7 @@ public class Game {
         System.out.println("They have rolled a " + roll);
 
         if (player.isInPenaltyBox()) {
-            playerTriesToGetOutOfPenalty(player, roll % 2 == 0);
+            playerTriesToGetOutOfPenalty(player, roll);
         } else {
             player.makeAMove(roll);
         }
@@ -42,14 +45,10 @@ public class Game {
         }
 
         System.out.println(getCurrentPlayerName() + "'s new location is " + player.getCurrentPlace());
-
+        // did not refactor corectly, rethink this a bit :(
         QuestionType category = gameHandlerService.getQuestionCategory(player.getCurrentPlace());
-        System.out.println("The category is " + category);
-        gameHandlerService.askQuestion(category);
-    }
-
-    private String getCurrentPlayerName() {
-        return getCurrentPlayer().getName();
+        System.out.println("The category is " + category.getLabel());
+        System.out.println(gameHandlerService.askQuestion(category).getContent());
     }
 
     public boolean answerIsRight() {
@@ -73,6 +72,10 @@ public class Game {
         return true; // can remove this ?
     }
 
+    private String getCurrentPlayerName() {
+        return getCurrentPlayer().getName();
+    }
+
     private void playerAnswersCorrectly(Player player) {
         System.out.println("Answer was correct!!!!");
         player.getACoin();
@@ -91,8 +94,8 @@ public class Game {
         System.out.println(player.getName() + " was sent to the penalty box");
     }
 
-    private void playerTriesToGetOutOfPenalty(Player player, boolean cantGetOut) {
-        if (cantGetOut) {
+    private void playerTriesToGetOutOfPenalty(Player player, int roll) {
+        if (roll % 2 == 0) {
             System.out.println(getCurrentPlayerName() + " is not getting out of the penalty box");
             player.setGettingOutOfPenaltyBox(false);
         } else {
