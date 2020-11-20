@@ -33,4 +33,8 @@ public class Player {
     public void setCurrentPlayer(boolean currentPlayer) {
         isCurrentPlayer = currentPlayer;
     }
+
+    public String getName() {
+        return name;
+    }
 }

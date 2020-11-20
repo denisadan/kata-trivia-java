@@ -14,4 +14,11 @@ public class PlayerService {
         return players.size();
     }
 
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public PlayerService(ArrayList<Player> players) {
+        this.players = players;
+    }
 }
