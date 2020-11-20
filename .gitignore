@@ -1,0 +1,12 @@
+ajcore*.txt
+bin/
+target/
+.classpath
+.project
+.checkstyle
+.settings/
+.directory
+.idea/*
+!/.idea/runConfigurations
+*.iml
+*.DS_Store
