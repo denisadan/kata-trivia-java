@@ -1,37 +1,56 @@
 package com.adaptionsoft.games.trivia.runner;
 
-import com.adaptionsoft.games.trivia.runner.Question.QuestionType;
-
 public class Player {
     private String name;
-    private QuestionType category;
-    private int place;
+
+    private int currentPlace;
     private int purse;
     private boolean inPenaltyBox;
-    private boolean isCurrentPlayer;
+    private boolean isGettingOutOfPenaltyBox;  // can we get rid of these 2 and leae just 1?
+
+    public void getACoin() {
+        purse = purse + 1;
+    }
+
+    public void makeAMove(int position) {
+        currentPlace = currentPlace + position;
+    }
 
     public Player(String name) {
         this.name = name;
     }
 
-    public void setCategory(QuestionType category) {
-        this.category = category;
+
+    public int getCurrentPlace() {
+        return currentPlace;
     }
 
-    public void setPlace(int place) {
-        this.place = place;
+    public void setCurrentPlace(int currentPlace) {
+        this.currentPlace = currentPlace;
+    }
+
+    public int getPurse() {
+        return purse;
     }
 
     public void setPurse(int purse) {
         this.purse = purse;
     }
 
+    public boolean isInPenaltyBox() {
+        return inPenaltyBox;
+    }
+
     public void setInPenaltyBox(boolean inPenaltyBox) {
         this.inPenaltyBox = inPenaltyBox;
     }
 
-    public void setCurrentPlayer(boolean currentPlayer) {
-        isCurrentPlayer = currentPlayer;
+    public boolean isGettingOutOfPenaltyBox() {
+        return isGettingOutOfPenaltyBox;
+    }
+
+    public void setGettingOutOfPenaltyBox(boolean gettingOutOfPenaltyBox) {
+        isGettingOutOfPenaltyBox = gettingOutOfPenaltyBox;
     }
 
     public String getName() {

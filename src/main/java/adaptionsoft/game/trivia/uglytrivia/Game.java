@@ -1,144 +1,122 @@
 package adaptionsoft.game.trivia.uglytrivia;
 
+import com.adaptionsoft.games.trivia.runner.GameHandlerService;
 import com.adaptionsoft.games.trivia.runner.Player;
-import com.adaptionsoft.games.trivia.runner.PlayerService;
 import com.adaptionsoft.games.trivia.runner.Question;
 import com.adaptionsoft.games.trivia.runner.Question.QuestionType;
-import com.adaptionsoft.games.trivia.runner.QuestionService;
-
-import java.util.ArrayList;
 
 public class Game {
-    private final PlayerService playerService = new PlayerService(new ArrayList<Player>());
-    private final QuestionService questionService = new QuestionService();
-
-    int[] places = new int[6];
-    int[] purses = new int[6];
-    boolean[] inPenaltyBox = new boolean[6];
-
+    private final GameHandlerService gameHandlerService = new GameHandlerService();
     int currentPlayer = 0;
-    boolean isGettingOutOfPenaltyBox;
 
-    public Game() {
+    public void initGame() {
         for (int i = 0; i < 50; i++) {
-            questionService.addQuestion(new Question(QuestionType.Pop, String.valueOf(i)));
-            questionService.addQuestion(new Question(QuestionType.Science, String.valueOf(i)));
-            questionService.addQuestion(new Question(QuestionType.Sports, String.valueOf(i)));
-            questionService.addQuestion(new Question(QuestionType.Rock, String.valueOf(i)));
+            gameHandlerService.addQuestion(new Question(QuestionType.POP, String.valueOf(i)));
+            gameHandlerService.addQuestion(new Question(QuestionType.SCIENCE, String.valueOf(i)));
+            gameHandlerService.addQuestion(new Question(QuestionType.SPORTS, String.valueOf(i)));
+            gameHandlerService.addQuestion(new Question(QuestionType.ROCK, String.valueOf(i)));
         }
     }
 
-    public boolean add(String playerName) {
-        playerService.addPlayer(new Player(playerName));
-
-        int numberOfPlayers = playerService.getNumberOfPlayers();
-
-        places[numberOfPlayers] = 0;
-        purses[numberOfPlayers] = 0;
-        inPenaltyBox[numberOfPlayers] = false;
-
+    public void addPlayer(String playerName) {
+        gameHandlerService.addPlayer(new Player(playerName));
         System.out.println(playerName + " was added");
-        System.out.println("They are player number " + numberOfPlayers);
-        return true;
+        System.out.println("They are player number " + gameHandlerService.getNumberOfPlayers());
     }
 
     public void roll(int roll) {
-        System.out.println(playerService.getPlayers().get(currentPlayer) + " is the current player");
+        Player player = getCurrentPlayer();
+
+        System.out.println(player.getName() + " is the current player");
         System.out.println("They have rolled a " + roll);
 
-        if (inPenaltyBox[currentPlayer]) {
-            if (roll % 2 != 0) {
-                isGettingOutOfPenaltyBox = true;
-
-                System.out.println(playerService.getPlayers().get(currentPlayer) + " is getting out of the penalty box");
-                places[currentPlayer] = places[currentPlayer] + roll;
-                if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
-
-                System.out.println(playerService.getPlayers().get(currentPlayer)
-                        + "'s new location is "
-                        + places[currentPlayer]);
-                System.out.println("The category is " + getCategoryByPlace(places[currentPlayer]));
-                questionService.askQuestion(getCategoryByPlace(places[currentPlayer]));
-            } else {
-                System.out.println(playerService.getPlayers().get(currentPlayer) + " is not getting out of the penalty box");
-                isGettingOutOfPenaltyBox = false;
-            }
-
+        if (player.isInPenaltyBox()) {
+            playerTriesToGetOutOfPenalty(player, roll % 2 == 0);
         } else {
-
-            places[currentPlayer] = places[currentPlayer] + roll;
-            if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
-
-            System.out.println(playerService.getPlayers().get(currentPlayer)
-                    + "'s new location is "
-                    + places[currentPlayer]);
-            System.out.println("The category is " + getCategoryByPlace(places[currentPlayer]));
-            questionService.askQuestion(getCategoryByPlace(places[currentPlayer]));
+            player.makeAMove(roll);
+        }
+        if (player.isGettingOutOfPenaltyBox()) {
+            player.makeAMove(roll);
         }
 
-    }
-
-    private QuestionType getCategoryByPlace(int place) {
-        if (place == 0 || place == 4 || place == 8) return QuestionType.Pop;
-        if (place == 1 || place == 5 || place == 9) return QuestionType.Science;
-        if (place == 2 || place == 6 || place == 10) return QuestionType.Sports;
-        return QuestionType.Rock;
-    }
-
-    public boolean wasCorrectlyAnswered() {
-        if (inPenaltyBox[currentPlayer]) {
-            if (isGettingOutOfPenaltyBox) {
-                System.out.println("Answer was correct!!!!");
-                purses[currentPlayer]++;
-                System.out.println(playerService.getPlayers().get(currentPlayer)
-                        + " now has "
-                        + purses[currentPlayer]
-                        + " Gold Coins.");
-
-                boolean winner = didPlayerWin();
-                currentPlayer++;
-                if (currentPlayer == playerService.getNumberOfPlayers()) currentPlayer = 0;
-
-                return winner;
-            } else {
-                currentPlayer++;
-                if (currentPlayer == playerService.getNumberOfPlayers()) currentPlayer = 0;
-                return true;
-            }
-
-
-        } else {
-
-            System.out.println("Answer was corrent!!!!");
-            purses[currentPlayer]++;
-            System.out.println(playerService.getPlayers().get(currentPlayer)
-                    + " now has "
-                    + purses[currentPlayer]
-                    + " Gold Coins.");
-
-            boolean winner = didPlayerWin();
-            currentPlayer++;
-            if (currentPlayer == playerService.getNumberOfPlayers()) currentPlayer = 0;
-
-            return winner;
+        if (player.getCurrentPlace() > 11) {
+            player.makeAMove(-12);
         }
+
+        System.out.println(getCurrentPlayerName() + "'s new location is " + player.getCurrentPlace());
+
+        QuestionType category = getCategoryByPlace(player.getCurrentPlace());
+        System.out.println("The category is " + category);
+        gameHandlerService.askQuestion(category);
     }
 
-    public boolean wrongAnswer() {
-        System.out.println("Question was incorrectly answered");
-        Player player = playerService.getPlayers().get(currentPlayer);
-        System.out.println(player.getName() + " was sent to the penalty box");
-        player.setInPenaltyBox(true);
+    private String getCurrentPlayerName() {
+        return getCurrentPlayer().getName();
+    }
 
-        inPenaltyBox[currentPlayer] = true;
+    private QuestionType getCategoryByPlace(int place) { // move this to game service?
+        if (place == 0 || place == 4 || place == 8) return QuestionType.POP;
+        if (place == 1 || place == 5 || place == 9) return QuestionType.SCIENCE;
+        if (place == 2 || place == 6 || place == 10) return QuestionType.SPORTS;
+        return QuestionType.ROCK;
+    }
 
+    public boolean answerIsRight() {
+        Player player = getCurrentPlayer();
+        boolean isWinner;
+
+        if (!player.isInPenaltyBox() || player.isGettingOutOfPenaltyBox()) {
+            playerAnswersCorrectly(player);
+            isWinner = didPlayerWin(player);
+            moveToNextPlayer();
+        } else {
+            moveToNextPlayer();
+            isWinner = true;
+        }
+
+        return isWinner; // faulty logic?
+    }
+
+    public boolean answerIsWrong() {
+        System.out.println("Question was incorrectly answered.");
+        sendToPenaltyBox(getCurrentPlayer());
+        moveToNextPlayer();
+        return true; // can remove this ?
+    }
+
+    private void playerAnswersCorrectly(Player player) {
+        System.out.println("Answer was correct!!!!");
+        player.getACoin();
+        System.out.println(getCurrentPlayerName() + " now has " + player.getPurse() + " Gold Coins.");
+    }
+
+    private void moveToNextPlayer() {
         currentPlayer++;
-        if (currentPlayer == playerService.getNumberOfPlayers()) currentPlayer = 0;
-        return true;
+        if (currentPlayer == gameHandlerService.getNumberOfPlayers()) {
+            currentPlayer = 0;
+        }
     }
 
+    private void sendToPenaltyBox(Player player) {
+        player.setInPenaltyBox(true);
+        System.out.println(player.getName() + " was sent to the penalty box");
+    }
 
-    private boolean didPlayerWin() {
-        return !(purses[currentPlayer] == 6);
+    private void playerTriesToGetOutOfPenalty(Player player, boolean cantGetOut) {
+        if (cantGetOut) {
+            System.out.println(getCurrentPlayerName() + " is not getting out of the penalty box");
+            player.setGettingOutOfPenaltyBox(false);
+        } else {
+            player.setGettingOutOfPenaltyBox(true);
+            System.out.println(getCurrentPlayerName() + " is getting out of the penalty box");
+        }
+    }
+
+    private Player getCurrentPlayer() {
+        return gameHandlerService.getPlayers().get(currentPlayer);
+    }
+
+    private boolean didPlayerWin(Player player) {
+        return (player.getPurse() != 6);
     }
 }

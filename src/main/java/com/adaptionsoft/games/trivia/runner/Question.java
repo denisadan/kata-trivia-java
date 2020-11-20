@@ -6,7 +6,7 @@ public class Question {
     private String content;
 
     public enum QuestionType {
-        Pop, Science, Sports, Rock
+        POP, SCIENCE, SPORTS, ROCK
     }
 
     public Question(QuestionType type, String content) {
