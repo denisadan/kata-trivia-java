@@ -1,60 +1,45 @@
 package com.adaptionsoft.games.trivia.runner;
 
 import com.adaptionsoft.games.trivia.IGame;
-import com.adaptionsoft.games.trivia.runner.Question.QuestionType;
 
-import static com.adaptionsoft.games.trivia.runner.Question.QuestionType.*;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class GameNew implements IGame {
 
-    private final GameHandlerService gameHandlerService = new GameHandlerService();
+    private final GameHandler gameHandler = new GameHandler();
     private int currentPlayer = 0;
 
     public GameNew() {
-        for (int i = 0; i < 50; i++) {
-            gameHandlerService.addQuestion(new Question(POP, "Pop Question " + i));
-            gameHandlerService.addQuestion(new Question(SCIENCE, "Science Question " + i));
-            gameHandlerService.addQuestion(new Question(SPORTS, "Sports Question " + i));
-            gameHandlerService.addQuestion(new Question(ROCK, "Rock Question " + i));
-        }
+        IntStream.range(0, 50).forEach(this::generateQuestionsForAllCategories);
     }
 
     public void add(String playerName) {
-        gameHandlerService.addPlayer(new Player(playerName));
-        System.out.println(playerName + " was added");
-        System.out.println("They are player number " + gameHandlerService.getNumberOfPlayers());
+        gameHandler.addPlayer(new Player(playerName));
+        System.out.println(playerName + " was added\nThey are player number " + gameHandler.getNumberOfPlayers());
     }
 
     public void roll(int roll) {
         Player player = getCurrentPlayer();
-
-        System.out.println(player.getName() + " is the current player");
-        System.out.println("They have rolled a " + roll);
+        System.out.println(player.getName() + " is the current player\nThey have rolled a " + roll);
 
         if (player.isInPenaltyBox()) {
-            playerTriesToGetOutOfPenalty(player, roll);
+            playerTriesToGetOutOfPenalty(player, roll % 2 == 1);
         }
 
         if (!player.isInPenaltyBox() || player.isGettingOutOfPenaltyBox()) {
             player.makeAMove(roll);
             System.out.println(player.getName() + "'s new location is " + player.getCurrentPlace());
 
-            chooseAQuestion(player.getCurrentPlace());
+            gameHandler.getAQuestion(player.getCurrentPlace());
         }
-    }
-
-    // se poate muta in question service? game handler?
-    private void chooseAQuestion(int playerPlace) {
-        QuestionType category = gameHandlerService.getQuestionCategory(playerPlace);
-        System.out.println("The category is " + category.getLabel());
-        System.out.println(gameHandlerService.askQuestion(category).getContent());
     }
 
     public boolean answerIsRight() {
         Player player = getCurrentPlayer();
 
         if (!player.isInPenaltyBox() || player.isGettingOutOfPenaltyBox()) {
-            playerAnswersCorrectly(player);
+            addCoin(player);
         }
         moveToNextPlayer();
 
@@ -68,15 +53,14 @@ public class GameNew implements IGame {
         return true;
     }
 
-    private void playerAnswersCorrectly(Player player) {
-        System.out.println("Answer was correct!!!!");
+    private void addCoin(Player player) {
         player.getACoin();
-        System.out.println(player.getName() + " now has " + player.getPurse() + " Gold Coins.");
+        System.out.println("Answer was correct!!!!\n" + player.getName() + " now has " + player.getPurse() + " Gold Coins.");
     }
 
     private void moveToNextPlayer() {
         currentPlayer++;
-        if (currentPlayer == gameHandlerService.getNumberOfPlayers()) {
+        if (currentPlayer == gameHandler.getNumberOfPlayers()) {
             currentPlayer = 0;
         }
     }
@@ -86,18 +70,17 @@ public class GameNew implements IGame {
         System.out.println(player.getName() + " was sent to the penalty box");
     }
 
-    private void playerTriesToGetOutOfPenalty(Player player, int roll) {
-        if (roll % 2 == 0) {
-            System.out.println(player.getName() + " is not getting out of the penalty box");
-            player.setGettingOutOfPenaltyBox(false);
-        } else {
-            player.setGettingOutOfPenaltyBox(true);
-            System.out.println(player.getName()+ " is getting out of the penalty box");
-        }
+    private void playerTriesToGetOutOfPenalty(Player player, boolean gettingOut) {
+        player.setGettingOutOfPenaltyBox(gettingOut);
+        System.out.println(gettingOut ? player.getName() + " is getting out of the penalty box" : player.getName() + " is not getting out of the penalty box");
     }
 
     private Player getCurrentPlayer() {
-        return gameHandlerService.getPlayers().get(currentPlayer);
+        return gameHandler.getPlayers().get(currentPlayer);
+    }
+
+    private void generateQuestionsForAllCategories(int content) {
+        Arrays.stream(QuestionType.values()).forEach(j -> gameHandler.addQuestion(new Question(j, j.getLabel() + " Question " + content)));
     }
 
 }

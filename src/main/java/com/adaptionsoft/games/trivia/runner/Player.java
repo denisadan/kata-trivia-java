@@ -44,13 +44,13 @@ public class Player {
         purse = purse + 1;
     }
 
+    public boolean isWinner() {
+        return (this.purse != 6);
+    }
+
     public void makeAMove(int position) {
         currentPlace = currentPlace + position;
         resetPosition();
-    }
-
-    public boolean isWinner() {
-        return (this.purse != 6);
     }
 
     private void resetPosition() {
