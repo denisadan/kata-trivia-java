@@ -1,4 +1,4 @@
-package com.adaptionsoft.games.trivia.runner;
+package com.adaptionsoft.games.trivia.runner.data;
 
 public enum QuestionType {
     POP("Pop"),

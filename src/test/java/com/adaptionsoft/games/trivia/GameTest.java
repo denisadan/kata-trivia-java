@@ -1,7 +1,7 @@
 package com.adaptionsoft.games.trivia;
 
 import com.adaptionsoft.games.trivia.oldrunner.GameOriginal;
-import com.adaptionsoft.games.trivia.runner.GameNew;
+import com.adaptionsoft.games.trivia.runner.service.Game;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +15,7 @@ public class GameTest {
     @Test
     public void caracterizationTest() {
         for (int seed = 1; seed < 10_000; seed++) {
-            String actualOutput = extractOutput(new Random(seed), new GameNew());
+            String actualOutput = extractOutput(new Random(seed), new Game());
             String expectedOutput  = extractOutput(new Random(seed), new GameOriginal());
             assertEquals(expectedOutput, actualOutput);
         }

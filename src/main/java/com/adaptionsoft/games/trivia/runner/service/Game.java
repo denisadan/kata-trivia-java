@@ -1,16 +1,19 @@
-package com.adaptionsoft.games.trivia.runner;
+package com.adaptionsoft.games.trivia.runner.service;
 
 import com.adaptionsoft.games.trivia.IGame;
+import com.adaptionsoft.games.trivia.runner.data.Player;
+import com.adaptionsoft.games.trivia.runner.data.Question;
+import com.adaptionsoft.games.trivia.runner.data.QuestionType;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class GameNew implements IGame {
+public class Game implements IGame {
 
     private final GameHandler gameHandler = new GameHandler();
     private int currentPlayer = 0;
 
-    public GameNew() {
+    public Game() {
         IntStream.range(0, 50).forEach(this::generateQuestionsForAllCategories);
     }
 

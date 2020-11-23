@@ -1,8 +1,12 @@
-package com.adaptionsoft.games.trivia.runner;
+package com.adaptionsoft.games.trivia.runner.service;
+
+import com.adaptionsoft.games.trivia.runner.data.Player;
+import com.adaptionsoft.games.trivia.runner.data.Question;
+import com.adaptionsoft.games.trivia.runner.data.QuestionType;
 
 import java.util.*;
 
-import static com.adaptionsoft.games.trivia.runner.QuestionType.*;
+import static com.adaptionsoft.games.trivia.runner.data.QuestionType.*;
 
 public class GameHandler {
     private final Map<QuestionType, LinkedList<Question>> questionsMap = new EnumMap<>(QuestionType.class);
