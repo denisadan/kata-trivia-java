@@ -33,20 +33,19 @@ public class GameNew implements IGame {
 
         if (player.isInPenaltyBox()) {
             playerTriesToGetOutOfPenalty(player, roll);
-        } else {
-            player.makeAMove(roll);
-        }
-        if (player.isGettingOutOfPenaltyBox()) {
-            player.makeAMove(roll);
         }
 
-        if (player.getCurrentPlace() > 11) {
-            player.makeAMove(-12);
-        }
+        if (!player.isInPenaltyBox() || player.isGettingOutOfPenaltyBox()) {
+            player.makeAMove(roll);
+            System.out.println(player.getName() + "'s new location is " + player.getCurrentPlace());
 
-        System.out.println(getCurrentPlayerName() + "'s new location is " + player.getCurrentPlace());
-        // did not refactor corectly, rethink this a bit :(
-        QuestionType category = gameHandlerService.getQuestionCategory(player.getCurrentPlace());
+            chooseAQuestion(player.getCurrentPlace());
+        }
+    }
+
+    // se poate muta in question service? game handler?
+    private void chooseAQuestion(int playerPlace) {
+        QuestionType category = gameHandlerService.getQuestionCategory(playerPlace);
         System.out.println("The category is " + category.getLabel());
         System.out.println(gameHandlerService.askQuestion(category).getContent());
     }
@@ -56,30 +55,23 @@ public class GameNew implements IGame {
 
         if (!player.isInPenaltyBox() || player.isGettingOutOfPenaltyBox()) {
             playerAnswersCorrectly(player);
-            moveToNextPlayer();
-        } else {
-            moveToNextPlayer();
-            return true;
         }
+        moveToNextPlayer();
 
-        return player.isWinner(); // faulty logic?
+        return player.isWinner();
     }
 
     public boolean answerIsWrong() {
         System.out.println("Question was incorrectly answered.");
         sendToPenaltyBox(getCurrentPlayer());
         moveToNextPlayer();
-        return true; // can remove this ?
-    }
-
-    private String getCurrentPlayerName() {
-        return getCurrentPlayer().getName();
+        return true;
     }
 
     private void playerAnswersCorrectly(Player player) {
         System.out.println("Answer was correct!!!!");
         player.getACoin();
-        System.out.println(getCurrentPlayerName() + " now has " + player.getPurse() + " Gold Coins.");
+        System.out.println(player.getName() + " now has " + player.getPurse() + " Gold Coins.");
     }
 
     private void moveToNextPlayer() {
@@ -96,11 +88,11 @@ public class GameNew implements IGame {
 
     private void playerTriesToGetOutOfPenalty(Player player, int roll) {
         if (roll % 2 == 0) {
-            System.out.println(getCurrentPlayerName() + " is not getting out of the penalty box");
+            System.out.println(player.getName() + " is not getting out of the penalty box");
             player.setGettingOutOfPenaltyBox(false);
         } else {
             player.setGettingOutOfPenaltyBox(true);
-            System.out.println(getCurrentPlayerName() + " is getting out of the penalty box");
+            System.out.println(player.getName()+ " is getting out of the penalty box");
         }
     }
 

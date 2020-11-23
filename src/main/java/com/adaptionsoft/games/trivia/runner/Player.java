@@ -6,7 +6,7 @@ public class Player {
     private int currentPlace;
     private int purse;
     private boolean inPenaltyBox;
-    private boolean isGettingOutOfPenaltyBox;  // can we get rid of these 2 and leae just 1?
+    private boolean isGettingOutOfPenaltyBox;
 
     public Player(String name) {
         this.name = name;
@@ -46,10 +46,17 @@ public class Player {
 
     public void makeAMove(int position) {
         currentPlace = currentPlace + position;
+        resetPosition();
     }
 
     public boolean isWinner() {
         return (this.purse != 6);
+    }
+
+    private void resetPosition() {
+        if (currentPlace > 11) {
+            currentPlace = currentPlace - 12;
+        }
     }
 
 }
