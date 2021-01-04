@@ -1,4 +1,4 @@
-package com.adaptionsoft.games.trivia.runner.data;
+package com.adaptionsoft.games.trivia.newrunner.data;
 
 public class Question {
 

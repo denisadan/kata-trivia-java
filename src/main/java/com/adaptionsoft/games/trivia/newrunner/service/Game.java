@@ -1,9 +1,9 @@
-package com.adaptionsoft.games.trivia.runner.service;
+package com.adaptionsoft.games.trivia.newrunner.service;
 
 import com.adaptionsoft.games.trivia.IGame;
-import com.adaptionsoft.games.trivia.runner.data.Player;
-import com.adaptionsoft.games.trivia.runner.data.Question;
-import com.adaptionsoft.games.trivia.runner.data.QuestionType;
+import com.adaptionsoft.games.trivia.newrunner.data.Player;
+import com.adaptionsoft.games.trivia.newrunner.data.Question;
+import com.adaptionsoft.games.trivia.newrunner.data.QuestionType;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;

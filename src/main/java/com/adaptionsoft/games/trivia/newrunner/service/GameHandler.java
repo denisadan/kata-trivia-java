@@ -1,12 +1,12 @@
-package com.adaptionsoft.games.trivia.runner.service;
+package com.adaptionsoft.games.trivia.newrunner.service;
 
-import com.adaptionsoft.games.trivia.runner.data.Player;
-import com.adaptionsoft.games.trivia.runner.data.Question;
-import com.adaptionsoft.games.trivia.runner.data.QuestionType;
+import com.adaptionsoft.games.trivia.newrunner.data.Player;
+import com.adaptionsoft.games.trivia.newrunner.data.Question;
+import com.adaptionsoft.games.trivia.newrunner.data.QuestionType;
 
 import java.util.*;
 
-import static com.adaptionsoft.games.trivia.runner.data.QuestionType.*;
+import static com.adaptionsoft.games.trivia.newrunner.data.QuestionType.*;
 
 public class GameHandler {
     private final Map<QuestionType, LinkedList<Question>> questionsMap = new EnumMap<>(QuestionType.class);
@@ -55,18 +55,12 @@ public class GameHandler {
     }
 
     private LinkedList<Question> getQuestionsByType(QuestionType type) {
-        switch (type) {
-            case POP:
-                return questionsMap.get(POP);
-            case ROCK:
-                return questionsMap.get(ROCK);
-            case SPORTS:
-                return questionsMap.get(SPORTS);
-            case SCIENCE:
-                return questionsMap.get(SCIENCE);
-            default:
-                return new LinkedList<>();
-        }
+        return switch (type) {
+            case POP -> questionsMap.get(POP);
+            case ROCK -> questionsMap.get(ROCK);
+            case SPORTS -> questionsMap.get(SPORTS);
+            case SCIENCE -> questionsMap.get(SCIENCE);
+        };
     }
 
 }

@@ -1,7 +1,7 @@
 package com.adaptionsoft.games.trivia;
 
 import com.adaptionsoft.games.trivia.oldrunner.GameOriginal;
-import com.adaptionsoft.games.trivia.runner.service.Game;
+import com.adaptionsoft.games.trivia.newrunner.service.Game;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
